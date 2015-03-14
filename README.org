@@ -4002,39 +4002,47 @@ for it in the directory containing the main source file (the one specified in
 command line). These rules concern also paths given with the "file" directive.
 
 *** 2.3.2  Symbolic constants
-The symbolic constants are different from the numerical constants, before the
-assembly process they are replaced with their values everywhere in source
-lines after their definitions, and anything can become their values.
-  The definition of symbolic constant consists of name of the constant
-followed by the "equ" directive. Everything that follows this directive will
-become the value of constant. If the value of symbolic constant contains
-other symbolic constants, they are replaced with their values before assigning
-this value to the new constant. For example:
+    The symbolic constants are different from the numerical constants, before the
+    assembly process they are replaced with their values everywhere in source
+    lines after their definitions, and anything can become their values.
 
+    The definition of symbolic constant consists of name of the constant
+    followed by the "equ" directive. Everything that follows this directive will
+    become the value of constant. If the value of symbolic constant contains
+    other symbolic constants, they are replaced with their values before assigning
+    this value to the new constant. For example:
+
+    #+begin_src fasm
     d equ dword
     NULL equ d 0
     d equ edx
+    #+end_src
 
-After these three definitions the value of "NULL" constant is "dword 0" and
-the value of "d" is "edx". So, for example, "push NULL" will be assembled as
-"push dword 0" and "push d" will be assembled as "push edx". And if then the
-following line was put:
+    After these three definitions the value of "NULL" constant is "dword 0" and
+    the value of "d" is "edx". So, for example, "push NULL" will be assembled as
+    "push dword 0" and "push d" will be assembled as "push edx". And if then the
+    following line was put:
 
+    #+begin_src fasm
     d equ d,eax
+    #+end_src
 
-the "d" constant would get the new value of "edx,eax". This way the growing
-lists of symbols can be defined.
-  "restore" directive allows to get back previous value of redefined symbolic
-constant. It should be followed by one more names of symbolic constants,
-separated with commas. So "restore d" after the above definitions will give
-"d" constant back the value "edx", the second one will restore it to value
-"dword", and one more will revert "d" to original meaning as if no such
-constant was defined. If there was no constant defined of given name,
-"restore" will not cause an error, it will be just ignored.
-  Symbolic constant can be used to adjust the syntax of assembler to personal
-preferences. For example the following set of definitions provides the handy
-shortcuts for all the size operators:
+    the "d" constant would get the new value of "edx,eax". This way the growing
+    lists of symbols can be defined.
 
+    "restore" directive allows to get back previous value of redefined symbolic
+    constant. It should be followed by one more names of symbolic constants,
+    separated with commas. So "restore d" after the above definitions will give
+    "d" constant back the value "edx", the second one will restore it to value
+    "dword", and one more will revert "d" to original meaning as if no such
+    constant was defined. If there was no constant defined of given name,
+    "restore" will not cause an error, it will be just ignored.
+
+    Symbolic constant can be used to adjust the syntax of assembler to personal
+    preferences. For example the following set of definitions provides the handy
+    shortcuts for all the size operators:
+
+    #+begin_src fasm
     b equ byte
     w equ word
     d equ dword
@@ -4044,34 +4052,42 @@ shortcuts for all the size operators:
     t equ tword
     x equ dqword
     y equ qqword
+    #+end_src
 
-  Because symbolic constant may also have an empty value, it can be used to
-allow the syntax with "offset" word before any address value:
+    Because symbolic constant may also have an empty value, it can be used to
+    allow the syntax with "offset" word before any address value:
 
+    #+begin_src fasm
     offset equ
+    #+end_src
 
-After this definition "mov ax,offset char" will be valid construction for
-copying the offset of "char" variable into "ax" register, because "offset" is
-replaced with an empty value, and therefore ignored.
-  The "define" directive followed by the name of constant and then the value,
-is the alternative way of defining symbolic constant. The only difference
-between "define" and "equ" is that "define" assigns the value as it is, it does
-not replace the symbolic constants with their values inside it.
-  Symbolic constants can also be defined with the "fix" directive, which has
-the same syntax as "equ", but defines constants of high priority - they are
-replaced with their symbolic values even before processing the preprocessor
-directives and macroinstructions, the only exception is "fix" directive
-itself, which has the highest possible priority, so it allows redefinition of
-constants defined this way.
-  The "fix" directive can be used for syntax adjustments related to directives
-of preprocessor, what cannot be done with "equ" directive. For example:
+    After this definition "mov ax,offset char" will be valid construction for
+    copying the offset of "char" variable into "ax" register, because "offset" is
+    replaced with an empty value, and therefore ignored.
 
+    The "define" directive followed by the name of constant and then the value,
+    is the alternative way of defining symbolic constant. The only difference
+    between "define" and "equ" is that "define" assigns the value as it is, it does
+    not replace the symbolic constants with their values inside it.
+
+    Symbolic constants can also be defined with the "fix" directive, which has
+    the same syntax as "equ", but defines constants of high priority - they are
+    replaced with their symbolic values even before processing the preprocessor
+    directives and macroinstructions, the only exception is "fix" directive
+    itself, which has the highest possible priority, so it allows redefinition of
+    constants defined this way.
+
+    The "fix" directive can be used for syntax adjustments related to directives
+    of preprocessor, what cannot be done with "equ" directive. For example:
+
+    #+begin_src fasm
     incl fix include
+    #+end_src
 
-defines a short name for "include" directive, while the similar definition done
-with "equ" directive wouldn't give such result, as standard symbolic constants
-are replaced with their values after searching the line for preprocessor
-directives.
+    defines a short name for "include" directive, while the similar definition done
+    with "equ" directive wouldn't give such result, as standard symbolic constants
+    are replaced with their values after searching the line for preprocessor
+    directives.
 
 *** 2.3.3  Macroinstructions
 "macro" directive allows you to define your own complex instructions, called
